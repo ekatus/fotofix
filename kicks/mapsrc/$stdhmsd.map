@@ -1,0 +1,30 @@
+//STDHMAPA JOB (AXXX),                                                  00000101
+//         'MICHAEL GROM',                                              00000200
+//         CLASS=C,                                                     00000300
+//         MSGCLASS=X,                                                  00000400
+//         MSGLEVEL=(1,1),                                              00000500
+//         NOTIFY=&SYSUID                                               00000601
+/*JOBPARM  ROOM=EGXX                                                    00000700
+//JOBPROC  DD DSN=DFHSIM.KICKSSYS.V1R5M0.PROCLIB,DISP=SHR               00000800
+//STDHMSD  EXEC KIKMAPS,MAPNAME=STDHMSD,KIKSUSR='EKATUS.KICKS'          00000901
+//COPY.SYSUT1 DD *                                                      00001002
+STDHMSD  DFHMSD LANG=COBOL,                                            X00001104
+                MODE=INOUT,                                            X00001204
+                CTRL=FREEKB,                                           X00001304
+                STORAGE=AUTO,                                          X00001404
+                DSATTS=(COLOR,HILIGHT),                                X00001504
+                MAPATTS=(COLOR,HILIGHT),                               X00001604
+                TIOAPFX=YES                                             00001704
+STDHMAP  DFHMDI SIZE=(24,80),COLOR=TURQUOISE                            00001804
+MTRANID  DFHMDF POS=(01,01),LENGTH=06,INITIAL='TRANS:'                  00001904
+FTRANID  DFHMDF POS=(01,08),LENGTH=08,ATTRB=ASKIP,COLOR=WHITE           00002004
+MUSERID  DFHMDF POS=(01,16),LENGTH=05,INITIAL='USER:'                   00002104
+FUSERID  DFHMDF POS=(01,22),LENGTH=08,ATTRB=ASKIP,COLOR=WHITE           00002204
+MTERMID  DFHMDF POS=(01,32),LENGTH=05,INITIAL='TERM:'                   00002304
+FTERMID  DFHMDF POS=(01,38),LENGTH=08,ATTRB=ASKIP,COLOR=WHITE           00002404
+MSYSID   DFHMDF POS=(01,46),LENGTH=04,INITIAL='SYS:'                    00002504
+FSYSID   DFHMDF POS=(01,51),LENGTH=04,ATTRB=ASKIP,COLOR=WHITE           00002604
+FTIME    DFHMDF POS=(01,60),LENGTH=08,ATTRB=ASKIP,COLOR=WHITE           00002704
+FDATE    DFHMDF POS=(01,70),LENGTH=10,ATTRB=ASKIP                       00002804
+         DFHMSD TYPE=FINAL                                              00002904
+         END                                                            00003004

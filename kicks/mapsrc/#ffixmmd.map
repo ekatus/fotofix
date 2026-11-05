@@ -1,0 +1,110 @@
+//FFIXMMDA JOB (AXX,BXX,CXX),                                           00000101
+//         'EKATUS',                                                    00000200
+//         CLASS=C,                                                     00000300
+//         MSGCLASS=X,                                                  00000400
+//         MSGLEVEL=(1,1),                                              00000500
+//         NOTIFY=&SYSUID                                               00000600
+/*JOBPARM  ROOM=MAIL                                                    00000700
+//JOBPROC  DD DSN=DFHSIM.KICKSSYS.V1R5M0.PROCLIB,DISP=SHR               00000800
+//FFIXMMD  EXEC KIKMAPS,MAPNAME=FFIXMMD,KIKSUSR='EKATUS.KICKS'          00000901
+//COPY.SYSUT1 DD *                                                      00001000
+         PRINT NOGEN                                                    00001100
+FFIXMMD  DFHMSD LANG=COBOL,                                            X00001201
+               MODE=INOUT,                                             X00001300
+               CTRL=FREEKB,                                            X00001400
+               STORAGE=AUTO,                                           X00001500
+               DSATTS=(COLOR,HILIGHT),                                 X00001600
+               MAPATTS=(COLOR,HILIGHT),                                X00001700
+               TIOAPFX=YES                                              00001800
+FFIXMTP  DFHMDI SIZE=(24,80),COLOR=TURQUOISE                            00001902
+         DFHMDF POS=(3,33),LENGTH=26,INITIAL='-=FOTOFIX=-',            X00002001
+               ATTRB=(ASKIP,BRT)                                        00002100
+         DFHMDF POS=(7,5),LENGTH=24,INITIAL='UEBERSICHT DER AUFTRAEGE'  00002201
+         DFHMDF POS=(9,5),LENGTH=75,ATTRB=(BRT,PROT,ASKIP),            X00002301
+               INITIAL='A  AUFTRAG  STATUS  DATUM      UHRZEIT   TERMINX00002403
+               AL SYSTEM USER'                                          00002503
+ACTION1  DFHMDF POS=(10,5),LENGTH=1,ATTRB=(UNPROT,BRT,IC)               00002603
+ORDER1   DFHMDF POS=(10,8),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),            X00002701
+               INITIAL='--------'                                       00002801
+STATUS1  DFHMDF POS=(10,17),LENGTH=1,ATTRB=(PROT,BRT,ASKIP),           X00002901
+               INITIAL='-'                                              00003001
+DATUM1   DFHMDF POS=(10,25),LENGTH=10,ATTRB=(PROT,BRT,ASKIP),          X00003101
+               INITIAL='----------'                                     00003201
+UHR1     DFHMDF POS=(10,36),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00003304
+               INITIAL='--------'                                       00003401
+TERM1    DFHMDF POS=(10,46),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00003504
+               INITIAL='----'                                           00003601
+SYS1     DFHMDF POS=(10,55),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00003704
+               INITIAL='----'                                           00003801
+USER1    DFHMDF POS=(10,62),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00003904
+               INITIAL='--------'                                       00004006
+ACTION2  DFHMDF POS=(11,5),LENGTH=1,ATTRB=(UNPROT,BRT)                  00004101
+ORDER2   DFHMDF POS=(11,8),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),            X00004201
+               INITIAL='--------'                                       00004301
+STATUS2  DFHMDF POS=(11,17),LENGTH=1,ATTRB=(PROT,BRT,ASKIP),           X00004401
+               INITIAL='-'                                              00004501
+DATUM2   DFHMDF POS=(11,25),LENGTH=10,ATTRB=(PROT,BRT,ASKIP),          X00004601
+               INITIAL='----------'                                     00004701
+UHR2     DFHMDF POS=(11,36),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00004804
+               INITIAL='--------'                                       00004901
+TERM2    DFHMDF POS=(11,46),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00005004
+               INITIAL='----'                                           00005101
+SYS2     DFHMDF POS=(11,55),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00005204
+               INITIAL='----'                                           00005301
+USER2    DFHMDF POS=(11,62),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00005404
+               INITIAL='--------'                                       00005501
+ACTION3  DFHMDF POS=(12,5),LENGTH=1,ATTRB=(UNPROT,BRT)                  00005601
+ORDER3   DFHMDF POS=(12,8),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),            X00005701
+               INITIAL='--------'                                       00005801
+STATUS3  DFHMDF POS=(12,17),LENGTH=1,ATTRB=(PROT,BRT,ASKIP),           X00005901
+               INITIAL='-'                                              00006001
+DATUM3   DFHMDF POS=(12,25),LENGTH=10,ATTRB=(PROT,BRT,ASKIP),          X00006101
+               INITIAL='----------'                                     00006201
+UHR3     DFHMDF POS=(12,36),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00006304
+               INITIAL='--------'                                       00006401
+TERM3    DFHMDF POS=(12,46),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00006504
+               INITIAL='----'                                           00006601
+SYS3     DFHMDF POS=(12,55),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00006704
+               INITIAL='----'                                           00006801
+USER3    DFHMDF POS=(12,62),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00006904
+               INITIAL='--------'                                       00007006
+ACTION4  DFHMDF POS=(13,5),LENGTH=1,ATTRB=(UNPROT,BRT)                  00007101
+ORDER4   DFHMDF POS=(13,8),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),            X00007201
+               INITIAL='--------'                                       00007301
+STATUS4  DFHMDF POS=(13,17),LENGTH=1,ATTRB=(PROT,BRT,ASKIP),           X00007401
+               INITIAL='-'                                              00007501
+DATUM4   DFHMDF POS=(13,25),LENGTH=10,ATTRB=(PROT,BRT,ASKIP),          X00007601
+               INITIAL='----------'                                     00007701
+UHR4     DFHMDF POS=(13,36),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00007804
+               INITIAL='--------'                                       00007901
+TERM4    DFHMDF POS=(13,46),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00008004
+               INITIAL='----'                                           00008101
+SYS4     DFHMDF POS=(13,55),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00008204
+               INITIAL='----'                                           00008301
+USER4    DFHMDF POS=(13,62),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00008404
+               INITIAL='--------'                                       00008506
+ACTION5  DFHMDF POS=(14,5),LENGTH=1,ATTRB=(UNPROT,BRT)                  00008601
+ORDER5   DFHMDF POS=(14,8),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),            X00008701
+               INITIAL='--------'                                       00008801
+STATUS5  DFHMDF POS=(14,17),LENGTH=1,ATTRB=(PROT,BRT,ASKIP),           X00008901
+               INITIAL='-'                                              00009001
+DATUM5   DFHMDF POS=(14,25),LENGTH=10,ATTRB=(PROT,BRT,ASKIP),          X00009101
+               INITIAL='----------'                                     00009201
+UHR5     DFHMDF POS=(14,36),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00009304
+               INITIAL='--------'                                       00009401
+TERM5    DFHMDF POS=(14,46),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00009504
+               INITIAL='----'                                           00009601
+SYS5     DFHMDF POS=(14,55),LENGTH=4,ATTRB=(PROT,BRT,ASKIP),           X00009704
+               INITIAL='----'                                           00009801
+USER5    DFHMDF POS=(14,62),LENGTH=8,ATTRB=(PROT,BRT,ASKIP),           X00009904
+               INITIAL='--------'                                       00010006
+         DFHMDF POS=(16,5),LENGTH=9,ATTRB=(PROT,BRT,ASKIP),            X00010103
+               INITIAL='SEITE: '                                        00010203
+PAGENO   DFHMDF POS=(16,12),LENGTH=3,ATTRB=(PROT,BRT,ASKIP,NUM),       X00010303
+               COLOR=WHITE                                              00010403
+MESSAG3  DFHMDF POS=(20,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=WHITE      00010503
+ERRMSG3  DFHMDF POS=(21,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=RED        00010603
+         DFHMDF POS=(23,5),LENGTH=45,                                  X00010709
+               INITIAL='PF3=VERLASSEN PF6=STATUS PF7=ZURUECK PF8=VOR'   00010808
+FFIXMMD  DFHMSD TYPE=FINAL                                              00010901
+         END                                                            00011000

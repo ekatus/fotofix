@@ -1,0 +1,212 @@
+//CCWIOA1# JOB  (AXX,BXX,CXX),
+//          CLASS=A,MSGLEVEL=(1,1),
+//          MSGCLASS=X,NOTIFY=&SYSUID
+//ASM   EXEC PGM=IFOX00,PARM=(NOOBJECT,DECK,XREF)
+//SYSLIB   DD DSN=SYS1.MACLIB,DISP=SHR
+//         DD DSN=SYS2.MACLIB,DISP=SHR
+//         DD DSN=SYS1.AMODGEN,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSUT1   DD UNIT=SYSDA,SPACE=(CYL,(2,1))
+//SYSUT2   DD UNIT=SYSDA,SPACE=(CYL,(2,1))
+//SYSUT3   DD UNIT=SYSDA,SPACE=(CYL,(2,1))
+//SYSLIN   DD DUMMY
+//SYSGO    DD DUMMY
+//SYSPUNCH DD DSN=EKATUS.OBJLIB(CCWIO),DISP=SHR
+//SYSIN    DD *
+         START 0
+         REGISTER
+IOTIMSV  EQU   500
+IOTIMLV  EQU   3000
+NAPSLICE EQU   15
+ONESEC   EQU   100
+HEXMAX   EQU   23
+HEXLEN   EQU   46
+CCWIO    CSECT
+         SAVE  (14,12)
+         BALR  12,0
+         USING *,12
+         LA    11,DATAAREA
+         USING DATAAREA,11
+         ST    13,SAVEAREA+4
+         LA    14,SAVEAREA
+         ST    14,8(13)
+         LR    13,14
+         MVI   RETCODE,X'00'
+         LA    R1,MSG010
+         BAL   R14,SAY
+         OPEN  (BSC2703,(INPUT))
+         TM    BSC2703+48,X'10'    DCBOFLGS - DID THE OPEN WORK
+         BO    OPENOK
+         LA    R1,MSG012
+         BAL   R14,SAY
+         MVI   RETCODE,X'0C'
+         B     RETURN
+OPENOK   EQU   *
+         LA    R1,MSG015
+         BAL   R14,SAY
+         LA    R1,MSG020
+         BAL   R14,SAY
+         LA    R1,CCWENABL
+         BAL   R14,DOIO
+         LTR   R15,R15
+         BZ    ENABLOK
+         LA    R1,MSG022
+         BAL   R14,SAY
+ENABLOK  EQU   *
+         WTO   '[RESET] ENABLE SUCCESSFUL'
+FINISH   EQU   *
+         LA    R1,CCWDISAB
+         BAL   R14,DOIO
+         CLOSE (BSC2703)
+         LA    R1,MSG999
+         BAL   R14,SAY
+RETURN   EQU   *
+         SR    R15,R15
+         IC    R15,RETCODE
+         L     R13,4(R13)
+         ST    R15,16(R13)         RETURN CODE INTO CALLERS SAVE AREA
+         LM    R14,R12,12(R13)
+         BR    R14
+         EJECT
+DOIO     ST    R14,DOIOSAVE
+         ST    R1,IOBSTRT          CCW ADDRESS , CLEARS IOBSIOCC TOO
+         XC    IOECB,IOECB
+         MVI   IOBFLAG1,X'42'      CMD CHAINING + UNRELATED REQUEST
+         MVI   IOBFLAG2,X'00'
+         MVI   IOBSENS0,X'00'
+         MVI   IOBSENS1,X'00'
+         EXCP  IOB
+         WAIT  ECB=IOECB
+         CLI   IOECB,X'7F'         NORMAL COMPLETION ?
+         BNE   DOIOBAD
+         SR    R15,R15
+         B     DOIOEND
+DOIOBAD  LA    R1,MSG900
+         BAL   R14,SAY
+         MVC   ERRINFO(1),IOECB         ECB COMPLETION CODE
+         MVC   ERRINFO+1(2),IOBSENS0    SENSE BYTES 0 AND 1
+         MVC   ERRINFO+3(4),IOBSTAT     CSW STATUS + RESIDUAL COUNT
+         LA    R1,ERRINFO
+         LA    R0,7
+         BAL   R14,DUMPHEX
+         LA    R15,8
+DOIOEND  L     R14,DOIOSAVE
+         BR    R14
+         SPACE 2
+DUMPHEX  ST    R14,DMPSAVE
+         MVC   HEXOUT,BLANKS
+         LR    R6,R1
+         LR    R7,R0
+         LA    R8,HEXOUT
+         LTR   R7,R7
+         BNP   DMPSHOW
+         LA    R9,HEXMAX
+         CR    R7,R9
+         BNH   DMPLOOP
+         LR    R7,R9
+DMPLOOP  SR    R9,R9
+         IC    R9,0(R6)
+         SRL   R9,4
+         LA    R9,HEXTAB(R9)
+         MVC   0(1,R8),0(R9)
+         SR    R9,R9
+         IC    R9,0(R6)
+         N     R9,F15
+         LA    R9,HEXTAB(R9)
+         MVC   1(1,R8),0(R9)
+         LA    R6,1(R6)
+         LA    R8,2(R8)
+         BCT   R7,DMPLOOP
+DMPSHOW  MVC   MSGTEXT,MSGHEX
+         MVC   MSGTEXT+16(HEXLEN),HEXOUT
+         WTO   MF=(E,MSGWTO)
+         L     R14,DMPSAVE
+         BR    R14
+*---------------------------------------------------------------------*
+*   S A Y  -  WTO THE 62 BYTE MESSAGE POINTED TO BY R1                *
+*---------------------------------------------------------------------*
+SAY      ST    R14,SAYSAVE
+         MVC   MSGTEXT,0(R1)
+         WTO   MF=(E,MSGWTO)
+         L     R14,SAYSAVE
+         BR    R14
+         EJECT
+         SPACE 2
+DATAAREA EQU   *
+SAYSAVE  DS    F
+DMPSAVE  DS    F
+DOIOSAVE DS    F
+F15      DC    F'15'
+IOECB    DC    F'0'
+RETCODE  DC    X'00'
+*---------------------------------------------------------------------*
+         DS    0F
+MSGWTO   DC    AL2(MSGWEND-MSGWTO)
+         DC    XL2'0000'
+MSGTEXT  DC    CL62' '
+MSGWEND  EQU   *
+         SPACE 2
+         DS    0F
+INAREA   DS    CL256
+         SPACE 2
+         DS    0F
+CCWENABL CCW   X'27',DUMMY,X'20',1
+CCWDISAB CCW   X'2F',DUMMY,X'20',1
+CCWWRITE CCW   X'01',DUMMY,X'20',1      ADDRESS+COUNT SET AT RUN TIME
+CCWREAD  CCW   X'02',DUMMY,X'20',1      ADDRESS+COUNT SET AT RUN TIME
+DUMMY    DC    X'00'
+         DS    0F
+IOB      EQU   *
+IOBFLAG1 DC    X'42'               FLAGS
+IOBFLAG2 DC    X'00'
+IOBSENS0 DC    X'00'               SENSE BYTE 0
+IOBSENS1 DC    X'00'               SENSE BYTE 1
+IOBECBP  DC    A(IOECB)            ADDRESS OF OUR ECB
+IOBFLAG3 DC    X'00'
+         DC    XL7'00'             REST OF THE STORED CSW
+IOBSTRT  DC    A(0)                SIOCC + CHANNEL PROGRAM ADDRESS
+IOBDCBP  DC    A(BSC2703)          ADDRESS OF THE DCB
+IOBRSTR  DC    A(0)                RESTART ADDRESS
+IOBINCAM DC    H'0'
+IOBERRCT DC    H'0'
+IOBSTAT  EQU   IOB+12              CSW UNIT + CHANNEL STATUS
+IOBRESID EQU   IOB+14              CSW RESIDUAL COUNT
+         SPACE 1
+         DS    0F
+SAVEAREA DS    18F
+ERRINFO  DC    XL8'00'
+HEXOUT   DC    CL46' '
+BLANKS   DC    CL46' '
+HEXTAB   DC    C'0123456789ABCDEF'
+         DS    0F
+MSG010   DC    CL62'[RESET] 010 OPENING LINE DCB - DDNAME BSCLINE'
+MSG012   DC    CL62'[RESET] 012 OPEN FAILED - IS BSCLINE DD ALLOCATED'
+MSG015   DC    CL62'[RESET] 015 LINE DCB IS OPEN'
+MSG020   DC    CL62'[RESET] 020 ENABLE - WAITING FOR THE TCP PARTNER'
+MSG022   DC    CL62'[RESET] 022 ENABLE FAILED - CONTINUING ANYWAY'
+MSG030   DC    CL62'[RESET] 030 BIDDING FOR THE LINE - SENDING ENQ'
+MSG032   DC    CL62'[RESET] 032 EXPECTED ACK0 - GOT SOMETHING ELSE'
+MSG034   DC    CL62'[RESET] 034 ACK0 RECEIVED - THE LINE IS OURS'
+MSG040   DC    CL62'[RESET] 040 SENDING TEXT BLOCK STX ... ETX'
+MSG042   DC    CL62'[RESET] 042 EXPECTED ACK1 - GOT SOMETHING ELSE'
+MSG044   DC    CL62'[RESET] 044 ACK1 RECEIVED - BLOCK ACCEPTED'
+MSG050   DC    CL62'[RESET] 050 EOT SENT - OUR TRANSMISSION IS OVER'
+MSG060   DC    CL62'[RESET] 060 TURNAROUND - WAITING FOR PARTNER BID'
+MSG062   DC    CL62'[RESET] 062 EXPECTED ENQ FROM THE PARTNER'
+MSG064   DC    CL62'[RESET] 064 EXPECTED AN STX TEXT BLOCK'
+MSG066   DC    CL62'[RESET] 066 EXPECTED EOT FROM THE PARTNER'
+MSG070   DC    CL62'[RESET] 070 INBOUND BLOCK RECEIVED AND ACKED'
+MSG900   DC    CL62'[RESET] 900 I/O ERROR - ECB SENSE STATUS RESID'
+MSG980   DC    CL62'[RESET] 980 READ RETURNED NO USABLE DATA'
+MSG990   DC    CL62'[RESET] 990 PROTOCOL ERROR - SEE MESSAGES ABOVE'
+MSG992   DC    CL62'[RESET] 992 PERMANENT I/O ERROR ON THE LINE'
+MSG999   DC    CL62'[RESET] 999 ENDING'
+MSGHEX   DC    CL62'[RESET] 900 RX ='
+MSGTXTP  DC    CL62'[RESET] 910 TEXT='
+         DS    0F
+*---------------------------------------------------------------------*
+*   D C B   -  EXCP , SO DSORG=PS AND MACRF=E                         *
+*---------------------------------------------------------------------*
+BSC2703  DCB   DDNAME=BSCDDN,DSORG=PS,MACRF=(E)
+         SPACE 2
+         END   CCWIO

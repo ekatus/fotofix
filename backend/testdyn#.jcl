@@ -1,0 +1,152 @@
+//TESTDYN# JOB  (AXX,BXX,CXX),
+//          CLASS=A,MSGLEVEL=(1,1),
+//          MSGCLASS=X,NOTIFY=&SYSUID
+//ASM   EXEC PGM=IFOX00,PARM=(OBJECT,NODECK,XREF)
+//SYSLIB   DD DSN=SYS1.MACLIB,DISP=SHR
+//         DD DSN=SYS2.MACLIB,DISP=SHR
+//         DD DSN=SYS1.AMODGEN,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSUT1   DD UNIT=SYSDA,SPACE=(CYL,(2,1))
+//SYSUT2   DD UNIT=SYSDA,SPACE=(CYL,(2,1))
+//SYSUT3   DD UNIT=SYSDA,SPACE=(CYL,(2,1))
+//SYSPUNCH DD DUMMY
+//SYSLIN   DD DUMMY
+//SYSGO    DD DSN=EKATUS.TEST.OBJLIB(TESTDYN),DISP=SHR
+//SYSIN    DD *
+         START 0
+         REGISTER
+TESTDYN  CSECT
+         SAVE  (14,12)
+         BALR  R12,0
+         USING *,R12
+         ST    R13,SAVEAREA+4
+         LA    R14,SAVEAREA
+         ST    R14,8(R13)
+         LR    R13,R14
+         ST    R14,SAVE14
+         ST    R13,SAVE13
+         OPEN  (SNAPDCB,(OUTPUT))
+         SR    R0,R0
+         SR    R1,R1
+         MVC   FUNC,=C'AL'            * ALLOC
+         LA    R1,PARMS
+         SR    R15,R15
+         ST    R13,SAVE13
+         L     R15,=V(DYNALLC)
+         BALR  R14,R15
+         ST    R15,SUBRC
+         ST    R14,SAVE14
+         SNAP  DCB=SNAPDCB,ID=1,PDATA=(REGS),STORAGE=(SUBRC,SUBRC+4)
+*        WTO   'BACK FROM DYNALLOC'
+         L     R13,SAVE13
+         L     R14,SAVE14
+         B     SKIPWTO
+         UNPK  WORK9(9),PAD15(5)
+         TR    WORK9(8),HEXTAB
+         MVC   WTOHEX15(8),WORK9
+         WTO   MF=(E,WTOALC)
+SKIPWTO  EQU   *
+         L     R14,SAVE14
+         L     R15,SUBRC
+         LTR   R15,R15
+         BZ    ALLOCOK
+         B     ERRALLC
+ALLOCOK  EQU   *
+         WTO   'OPEN ACB'
+         BAL   R14,OPENACB
+         WTO   'VSAM TEST PERFORMED'
+         SR    R0,R0
+         SR    R1,R1
+         MVC   FUNC,=C'FL'            * FREE
+         LA    R1,PARMS
+         SR    R15,R15
+         L     R15,=V(DYNALLC)
+         BALR  R14,R15
+         ST    R15,SAVE15
+         WTO   'BACK FROM DYNAFREE'
+         UNPK  WTOHEX15(9),SAVE15(5)
+         TR    WTOHEX15(8),HEXTAB
+         WTO   MF=(E,WTOALC)
+         B     EXIT
+ERRALLC  EQU   *
+         WTO   'ERROR ALLOCATING VSAM CLUSTER'
+         SR    R15,R15
+EXIT     EQU   *
+         CLOSE (SNAPDCB)
+         L     R14,SAVE14
+         L     R13,4(,R13)
+         LM    R14,R12,12(R13)
+         SR    R15,R15
+         BR    R14
+OPENACB  EQU   *
+         OPEN  (ORDERBK,INPUT)
+         LTR   R15,R15
+         BNZ   ERRACB
+         WTO   'VSAM CLUSTER SUCCESSFULLY OPENED'
+         CLOSE (ORDERBK)
+         SR    R15,R15
+         B     RETACB
+ERRACB   EQU   *
+         WTO   'ERROR OPEN ACB'
+RETACB   EQU   *
+         BR    R14
+         DS    0F
+PAD15    DC    XL1'00'
+SUBRC    DC    F'0'
+         DS    0F
+WORK9    DC    CL9'000000000'
+         DS    0F
+PARMS    EQU *
+         DC    A(FUNC)
+         DC    A(DDNAME)
+         DC    A(DSNAME+X'80000000')
+         DS    0F
+FUNC     DC  CL2'AN'
+         DS  0F
+DDNLEN   DC  AL2(8)
+DSNLEN   DC  AL2(23)
+DDNAME   DC  CL8'DYNVSAMX'
+DSNAME   DC  CL44'FOTOFIX.ORDERBK.CLUSTER'
+         DS  0F
+WTOALC   DC  AL2(WTOALCL)
+         DC  XL2'0000'
+         DC  CL6'ALLOC '
+         DC  CL4'R15='
+WTOHEX15 DC  CL8'#########'
+WTOALCL  EQU *-WTOALC
+         DS  0F
+DATAAREA DS  0F
+SAVEAREA DC  18F'0'
+HEXTAB   EQU   *-X'F0'
+         DC    C'0123456789ABCDEF'
+         DS    0F
+ORDERBK  ACB   AM=VSAM,DDNAME=DYNVSAMX,MACRF=(KEY,SEQ,DIR,IN,OUT)
+         DS    0F
+         DS    0F
+SAVE13   DS    F
+SAVE14   DS    F
+SAVE15   DS    F
+         DS    0F
+SNAPDCB  DCB   DSORG=PS,RECFM=VBA,LRECL=125,BLKSIZE=1632,              X
+               DDNAME=SNAPDD,MACRF=(W)
+         LTORG ,
+         END
+*/
+//LINKSTUB EXEC PGM=IEWL,PARM='XREF,LIST,LET,MAP'
+//SYSPRINT DD SYSOUT=*
+//SYSUT1   DD UNIT=SYSDA,SPACE=(1024,(200,20))
+//MYOBJ    DD DISP=SHR,DSN=EKATUS.TEST.OBJLIB
+//SYSLMOD  DD DISP=SHR,DSN=EKATUS.LOADLIB(TESTDYN)
+//SYSLIN   DD *
+ INCLUDE MYOBJ(TESTDYN)
+ INCLUDE MYOBJ(DYNALLC)
+ INCLUDE MYOBJ(MVSLOCK)
+ ENTRY TESTDYN
+ NAME TESTDYN(R)
+/*
+//GO       EXEC PGM=TESTDYN,REGION=4M
+//STEPLIB  DD   DSN=EKATUS.LOADLIB,DISP=SHR
+//SNAPDD   DD   SYSOUT=*
+//SYSOUT   DD   SYSOUT=*
+//SYSUDUMP DD   SYSOUT=*
+//SYSPRINT DD   SYSOUT=*

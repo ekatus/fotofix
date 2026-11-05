@@ -1,0 +1,87 @@
+//FFIXMSDA JOB (AXX,BXX,CXX),                                           00000114
+//         'EKATUS',                                                    00000200
+//         CLASS=C,                                                     00000300
+//         MSGCLASS=X,                                                  00000400
+//         MSGLEVEL=(1,1),                                              00000500
+//         NOTIFY=&SYSUID                                               00000600
+/*JOBPARM  ROOM=MAIL                                                    00000700
+//JOBPROC  DD DSN=DFHSIM.KICKSSYS.V1R5M0.PROCLIB,DISP=SHR               00000800
+//FFIXMAP  EXEC KIKMAPS,MAPNAME=FFIXMSD,KIKSUSR='EKATUS.KICKS'          00000900
+//COPY.SYSUT1 DD *                                                      00001000
+         PRINT NOGEN                                                    00001100
+FFIXMSD  DFHMSD LANG=COBOL,                                            X00001200
+               MODE=INOUT,                                             X00001300
+               CTRL=FREEKB,                                            X00001400
+               STORAGE=AUTO,                                           X00001500
+               DSATTS=(COLOR,HILIGHT),                                 X00001600
+               MAPATTS=(COLOR,HILIGHT),                                X00001700
+               TIOAPFX=YES                                              00001800
+FFIXMAP  DFHMDI SIZE=(24,80),COLOR=TURQUOISE                            00001900
+         DFHMDF POS=(3,30),LENGTH=30,INITIAL='FOTOFIX-AUFTRAG',        X00002000
+               ATTRB=(ASKIP,BRT)                                        00002100
+         DFHMDF POS=(7,5),LENGTH=15,INITIAL='LAUFZETTEL-NR.:'           00002200
+LAUFZN   DFHMDF POS=(7,21),LENGTH=8,ATTRB=(FSET,BRT,UNPROT,IC)          00002300
+         DFHMDF POS=(7,30),LENGTH=1,ATTRB=(ASKIP)                       00002400
+         DFHMDF POS=(9,31),LENGTH=1,ATTRB=(ASKIP,PROT)                  00002500
+         DFHMDF POS=(12,5),LENGTH=73,ATTRB=(ASKIP,PROT,BRT),           X00002600
+               INITIAL='Mit der Funktionstaste PF2 wird Ihr Auftrag vomx00002700
+                zentralen Server abgeholt'                              00002800
+         DFHMDF POS=(13,5),LENGTH=73,ATTRB=(ASKIP,PROT,BRT),           X00002900
+               INITIAL='und an das Job Entry Subsystem JES2 uebergeben.X00003000
+                Sie koennen sich Ihren'                                 00003100
+         DFHMDF POS=(14,5),LENGTH=68,ATTRB=(ASKIP,PROT,BRT),           X00003223
+               INITIAL='Ausdruck beim Print Operator am A3 Matrix DruckX00003300
+               er Tisch 97 abholen.'                                    00003423
+MESSAGE  DFHMDF POS=(20,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=WHITE      00003500
+ERRMSG   DFHMDF POS=(21,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=RED        00003600
+PFKEYS   DFHMDF POS=(23,5),LENGTH=50,                                  X00003722
+               INITIAL='PF2=ABSENDEN PF3=VERLASSEN'                     00003800
+FFIXMP2  DFHMDI SIZE=(24,80),COLOR=GREEN                                00003900
+         DFHMDF POS=(3,30),LENGTH=30,INITIAL='FOTOFIX-AUFTRAG',        X00004000
+               ATTRB=(ASKIP,BRT)                                        00004100
+         DFHMDF POS=(5,1),LENGTH=16,ATTRB=(ASKIP,BRT),                 X00004200
+               INITIAL='AUFTRAGS-STATUS'                                00004300
+         DFHMDF POS=(6,1),LENGTH=4,ATTRB=(ASKIP,BRT),                  X00004400
+               INITIAL='RC: '                                           00004500
+VSAMRC1  DFHMDF POS=(6,5),LENGTH=2,ATTRB=(ASKIP,BRT),COLOR=WHITE        00004600
+         DFHMDF POS=(6,8),LENGTH=1,ATTRB=(ASKIP,BRT),INITIAL='/'        00004700
+VSAMRC2  DFHMDF POS=(6,9),LENGTH=2,ATTRB=(ASKIP,BRT),COLOR=WHITE        00004800
+MESSAG2  DFHMDF POS=(8,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=WHITE       00004900
+         DFHMDF POS=(10,1),LENGTH=40,ATTRB=(ASKIP,BRT),                X00005024
+               COLOR=TURQUOISE,                                        X00005124
+               INITIAL='SIE KOENNEN IHREN AUSDRUCK AN TISCH 97'         00005224
+         DFHMDF POS=(11,1),LENGTH=44,ATTRB=(ASKIP,BRT),                X00005324
+               COLOR=TURQUOISE,                                        X00005424
+               INITIAL='IN EMPFANG NEHMEN. HALTEN SIE HIERFUER BITTE'   00005524
+         DFHMDF POS=(12,1),LENGTH=40,ATTRB=(ASKIP,BRT),                X00005624
+               COLOR=TURQUOISE,                                        X00005724
+               INITIAL='IHREN LAUFZETTEL BEREIT.'                       00005824
+ERRMSG2  DFHMDF POS=(21,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=RED        00005900
+         DFHMDF POS=(21,41),LENGTH=1,ATTRB=(ASKIP,BRT)                  00006000
+FFIXMEX  DFHMDI SIZE=(24,80),COLOR=YELLOW                               00006115
+         DFHMDF POS=(3,30),LENGTH=30,INITIAL='FOTOFIX BEENDEN',        X00006215
+               ATTRB=(ASKIP,BRT)                                        00006315
+         DFHMDF POS=(5,1),LENGTH=33,ATTRB=(ASKIP,BRT),                 X00006415
+               INITIAL='WENN SIE FOTOFIX BEENDEN MOECHTEN'              00006515
+         DFHMDF POS=(6,1),LENGTH=17,ATTRB=(ASKIP,BRT),                 X00006615
+               INITIAL='DRUECKEN SIE PF4!'                              00006715
+MESSAG3  DFHMDF POS=(8,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=WHITE       00006815
+ERRMSG4  DFHMDF POS=(21,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=RED        00006916
+         DFHMDF POS=(21,41),LENGTH=1,ATTRB=(ASKIP,BRT)                  00007015
+         DFHMDF POS=(23,5),LENGTH=60,                                  X00007121
+               INITIAL='PF3=ZURUECK PF4=BEENDEN PF5=ADMIN'              00007221
+FFIXADM  DFHMDI SIZE=(24,80),COLOR=WHITE                                00007318
+         DFHMDF POS=(3,20),LENGTH=30,INITIAL='FOTOFIX ADMIN ANMELDUNG',X00007418
+               ATTRB=(ASKIP,BRT)                                        00007518
+         DFHMDF POS=(5,1),LENGTH=33,ATTRB=(ASKIP,BRT),                 X00007618
+               INITIAL='ADMINISTRATOR KENNWORT EINGEBEN:['              00007718
+FFXPASS  DFHMDF POS=(5,35),LENGTH=8,ATTRB=(FSET,BRT,UNPROT,DRK,IC)      00007819
+         DFHMDF POS=(5,44),LENGTH=1,ATTRB=(ASKIP,PROT,BRT),            X00007920
+               INITIAL=']'                                              00008018
+MESSAG5  DFHMDF POS=(8,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=WHITE       00008118
+ERRMSG5  DFHMDF POS=(21,1),LENGTH=40,ATTRB=(ASKIP,BRT),COLOR=RED        00008218
+         DFHMDF POS=(21,41),LENGTH=1,ATTRB=(ASKIP,BRT)                  00008318
+         DFHMDF POS=(23,5),LENGTH=50,                                  X00008418
+               INITIAL='PF3=ZURUECK PF2=ANMELDEN'                       00008518
+FFIXMSD  DFHMSD TYPE=FINAL                                              00008600
+         END                                                            00008700

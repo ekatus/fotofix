@@ -1,0 +1,37 @@
+//FFIXLOGA JOB (AXX,BXX,CXX),                                           00000101
+//         'EKATUS',                                                    00000200
+//         CLASS=C,                                                     00000300
+//         MSGCLASS=X,                                                  00000400
+//         MSGLEVEL=(1,1),                                              00000500
+//         NOTIFY=&SYSUID                                               00000600
+/*JOBPARM  ROOM=MAIL                                                    00000700
+//JOBPROC  DD DSN=DFHSIM.KICKSSYS.V1R5M0.PROCLIB,DISP=SHR               00000800
+//FFIXMAP  EXEC KIKMAPS,MAPNAME=FFIXMSL,KIKSUSR='EKATUS.KICKS'          00000901
+//COPY.SYSUT1 DD *                                                      00001001
+         PRINT NOGEN                                                    00001101
+FFIXMSL  DFHMSD LANG=COBOL,                                            X00001201
+               MODE=OUT,                                               X00001303
+               CTRL=FREEKB,                                            X00001401
+               STORAGE=AUTO,                                           X00001501
+               DSATTS=(COLOR,HILIGHT),                                 X00001601
+               MAPATTS=(COLOR,HILIGHT),                                X00001701
+               TIOAPFX=YES                                              00001801
+FFIXLOGA DFHMDI SIZE=(24,80),COLOR=TURQUOISE                            00001901
+         DFHMDF POS=(5,5),LENGTH=78,INITIAL='_/_/_/_/    _/_/    _/_/_/X00002001
+               _/_/    _/_/    _/_/_/_/  _/_/_/  _/      _/'            00002102
+         DFHMDF POS=(6,4),LENGTH=78,INITIAL='_/        _/    _/      _/X00002201
+                     _/    _/  _/          _/      _/  _/'              00002302
+         DFHMDF POS=(7,3),LENGTH=78,INITIAL='_/_/_/    _/    _/      _/X00002401
+                     _/    _/  _/_/_/      _/        _/'                00002502
+         DFHMDF POS=(8,2),LENGTH=78,INITIAL='_/        _/    _/      _/X00002601
+                     _/    _/  _/          _/      _/  _/'              00002702
+         DFHMDF POS=(9,1),LENGTH=78,INITIAL='_/          _/_/        _/X00002801
+                       _/_/    _/        _/_/_/  _/      _/'            00002901
+         DFHMDF POS=(12,16),LENGTH=43,                                 X00003002
+               INITIAL='Verein zum Erhalt klassischer Computer e.V.'    00003101
+         DFHMDF POS=(20,20),LENGTH=34,                                 X00003202
+               INITIAL='Bitte druecken Sie die ENTER oder '             00003304
+         DFHMDF POS=(21,20),LENGTH=34,                                 X00003404
+               INITIAL='die Datenfreigabe-Taste'                        00003504
+FFIXMSL  DFHMSD TYPE=FINAL                                              00003601
+         END                                                            00003701

@@ -1,0 +1,13 @@
+//PXXXXXXA JOB (AXX,BXX,CXX),'VzEkC e.V.',
+//         CLASS=A,
+//         MSGCLASS=Z,
+//         MSGLEVEL=(0,0),
+//         USER=<user>,
+//         PASSWORD=<pass>
+/*JOBPARM  ROOM=CC26
+//STEP1    EXEC PGM=IEBGENER
+//SYSPRINT DD SYSOUT=*
+//*INSERT_DD_HERE
+//SYSUT2   DD SYSOUT=C,
+//            DCB=(RECFM=FBA,LRECL=133,BLKSIZE=1330)
+//SYSIN    DD DUMMY
