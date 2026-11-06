@@ -1,5 +1,15 @@
-# fotofix
-The implementation of the FOTOFIX client for MVS 3.8j bridging the vintage OS into the modern world.
+<!-- KOPFZEILE START -->
+<div align="center">
+  <img src="./media/FOTOFIX_LOGO.png" width="120" alt="Projekt Logo" style="max-width: 100%;">
+  <h1>FOTOFIX</h1>
+  <p>The FOTOFIX Client implementation for MVS 3.8j</p>
+  <p>bridging the vintage OS into the modern world</p>
+  <!-- Optionale Badges für mehr Style -->
+  <img src="https://shields.io" alt="Version">
+  <img src="https://shields.io" alt="Lizenz">
+</div>
+<!-- KOPFZEILE ENDE -->
+
 
 The source code has been - except for the Python bridge part, been entirely created on MVS 3.8j using MVS tools. Don't expect the code to build or 
 run in your environment. It also greatly depends on ASCII art provided to the FOTOFIX client through the Python bridge. Feel free to mock this by 
