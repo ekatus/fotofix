@@ -38,7 +38,7 @@ Hans Hübner for his continued support and sweet-talking his wife into bringing 
 and not to forget to mention all those not mentioned. Without you, I likely would have failed to deliver the MVS flavour of FOTOFIX at the
 "Classic Computing 2026" exhibition.
 
-Areas tacked by the FOTOFIX project are:
+Areas tackled by the FOTOFIX project are:
 
 pseudo-conversational COBOL transactions for CICS (KICKS)
 
